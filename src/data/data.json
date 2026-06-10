@@ -1,0 +1,76 @@
+{
+  "metadata": {
+    "created_at": null,
+    "updated_at": null,
+    "version": "2.0.0"
+  },
+  "courses": [
+    {
+      "id": "course_default",
+      "name": "",
+      "description": "",
+      "outcomes": [],
+      "modules": []
+    }
+  ],
+  "prompts": {
+    "content": {
+      "systemPrompt": "You are an expert instructional designer creating high-quality learning content.\n\nCourse Context:\n- Course Name: {{course.name}}\n- Course Outcomes: {{#each course.outcomes}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}\n- Course Description: {{course.description}}\n\nModule Context:\n- Module Name: {{module.name}}\n- Module Description: {{module.description}}\n\nYour task is to create comprehensive, engaging learning content that:\n1. Aligns with course outcomes\n2. Follows the learner journey\n3. Incorporates provided artifacts\n4. Uses clear, concise language\n5. Includes practical examples\n6. Follows markdown formatting standards\n\nCreate content that helps learners achieve mastery of the topic.",
+      "userPrompt": "Create a detailed learning unit for:\n\n**Learning Unit Details:**\n- Name: {{learningUnit.name}}\n- Description: {{learningUnit.description}}\n- Duration: {{learningUnit.duration}} minutes\n- Learner Journey: {{learningUnit.learner_journey}}\n\n**Artifacts:**\n{{#each learningUnit.artifacts}}\n{{add @index 1}}. Type: {{this.artifact_type}}, Link: {{this.link}}\n{{/each}}\n\n**Additional Guidance:**\n{{learningUnit.additional_guidance}}\n\n**Instructions:**\nGenerate comprehensive markdown content that:\n- Starts with a clear introduction\n- Breaks down the topic into digestible sections\n- Includes code examples where relevant\n- Has a summary/conclusion\n- Uses proper markdown formatting (headings, lists, code blocks, etc.)\n\nThe content should be suitable for the specified duration and follow the learner journey."
+    },
+    "quiz": {
+      "systemPrompt": "You are an expert assessment designer.\n\nGenerate high-quality quiz questions based on the provided learning content.\n\nRequirements:\n1. Questions must align with the learning content\n2. Maintain specified difficulty distribution\n3. Use beginner-friendly language where appropriate\n4. Avoid ambiguous or duplicate questions\n5. Include explanations for every answer\n6. Return ONLY valid JSON\n7. Do not include markdown formatting\n8. Ensure each question has exactly 4 options\n9. Only one option should be correct",
+      "userPrompt": "Generate quiz questions for the following learning unit.\n\nLearning Unit Name:\n{{learningUnit.name}}\n\nDifficulty Distribution:\n- Easy: {{learningUnit.questions.config.easy}}\n- Medium: {{learningUnit.questions.config.medium}}\n- Hard: {{learningUnit.questions.config.hard}}\n\nLearning Content:\n{{learningUnit.generated_content}}\n\nReturn exactly 5 questions. Never return more or less. Preserve the requested difficulty distribution as closely as possible.\n\nReturn response in this exact JSON structure:\n{\n  \"questions\": [\n    {\n      \"id\": \"\",\n      \"difficulty\": \"easy\",\n      \"question\": \"\",\n      \"options\": [\"\", \"\", \"\", \"\"],\n      \"correct_answer\": 0,\n      \"explanation\": \"\"\n    }\n  ]\n}"
+    }
+  },
+  "templates": {
+    "course": {
+      "id": "",
+      "name": "New Course",
+      "description": "",
+      "outcomes": [],
+      "modules": []
+    },
+    "module": {
+      "id": "",
+      "name": "New Module",
+      "description": "",
+      "learning_units": []
+    },
+    "learning_unit": {
+      "id": "",
+      "name": "New Learning Unit",
+      "description": "",
+      "learner_journey": "",
+      "duration": 90,
+      "artifacts": [],
+      "additional_guidance": "",
+      "generated_content": "",
+      "generated_at": null,
+      "questions": {
+        "config": {
+          "total_questions": 5,
+          "easy": 2,
+          "medium": 2,
+          "hard": 1
+        },
+        "generated_questions": [],
+        "generated_at": null,
+        "generation_status": "idle"
+      }
+    },
+    "artifact": {
+      "index_id": 0,
+      "artifact_type": "video",
+      "link": ""
+    },
+    "question": {
+      "id": "",
+      "difficulty": "easy",
+      "question": "",
+      "options": ["", "", "", ""],
+      "correct_answer": 0,
+      "explanation": ""
+    }
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "success": true,
+  "questions": [
+    {
+      "difficulty": "easy",
+      "question": "Which keyword is used to declare a block-scoped variable in JavaScript?",
+      "options": [
+        "var",
+        "let",
+        "const",
+        "function"
+      ],
+      "correct_answer": 1,
+      "explanation": "The 'let' keyword declares a block-scoped variable that can be updated but not redeclared in the same scope. Unlike 'var' which is function-scoped, 'let' provides better scoping control and is the preferred choice for variables that need to change."
+    },
+    {
+      "difficulty": "easy",
+      "question": "What is the result of typeof null in JavaScript?",
+      "options": [
+        "'null'",
+        "'undefined'",
+        "'object'",
+        "'number'"
+      ],
+      "correct_answer": 2,
+      "explanation": "typeof null returns 'object', which is a well-known bug in JavaScript that has existed since the language's creation. This cannot be fixed due to backward compatibility concerns, as changing it would break existing code across the web."
+    },
+    {
+      "difficulty": "medium",
+      "question": "What will be the output of: let x = '5' + 3;",
+      "options": [
+        "8",
+        "'53'",
+        "53",
+        "TypeError"
+      ],
+      "correct_answer": 1,
+      "explanation": "JavaScript performs type coercion in this case. When the + operator is used with a string and a number, the number is converted to a string and concatenation occurs. So '5' + 3 results in the string '53', not the number 8."
+    },
+    {
+      "difficulty": "medium",
+      "question": "Which of the following correctly demonstrates the difference between let and const?",
+      "options": [
+        "let variables are block-scoped, const variables are function-scoped",
+        "let variables can be updated, const variables cannot",
+        "let variables are hoisted, const variables are not",
+        "let variables need initialization, const variables don't"
+      ],
+      "correct_answer": 1,
+      "explanation": "Both let and const are block-scoped and hoisted. The key difference is that let variables can be updated (reassigned) after declaration, while const variables cannot be reassigned. However, const objects and arrays can have their contents modified."
+    },
+    {
+      "difficulty": "hard",
+      "question": "What is the result of: 0.1 + 0.2 === 0.3 in JavaScript?",
+      "options": [
+        "true",
+        "false",
+        "undefined",
+        "NaN"
+      ],
+      "correct_answer": 1,
+      "explanation": "This expression evaluates to false due to floating-point precision issues. Computers store decimal numbers in binary format, and some decimal numbers cannot be represented exactly in binary. The result of 0.1 + 0.2 is actually 0.30000000000000004. To compare floating-point numbers, use a small epsilon value: Math.abs(0.1 + 0.2 - 0.3) < Number.EPSILON."
+    },
+    {
+      "difficulty": "hard",
+      "question": "Consider this code: var x = 1; { var x = 2; } console.log(x); What will be logged?",
+      "options": [
+        "1",
+        "2",
+        "undefined",
+        "ReferenceError"
+      ],
+      "correct_answer": 1,
+      "explanation": "The output will be 2 because 'var' is function-scoped, not block-scoped. Even though the second declaration is inside a block, it redeclares the same variable in the same scope. If 'let' or 'const' were used instead, the inner x would be a separate variable and the output would be 1, demonstrating why 'let' and 'const' are preferred over 'var'."
+    }
+  ],
+  "timestamp": "2024-04-29T12:15:00.000Z"
+}

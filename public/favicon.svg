@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="AI head favicon">
+  <!-- Transparent background; circular icon centered -->
+  <g fill="none" fill-rule="evenodd">
+    <!-- Circular badge (visible shape) -->
+    <circle cx="128" cy="128" r="112" fill="#0f4ea6" />
+
+    <!-- Simplified head silhouette (high-contrast white) -->
+    <path fill="#FFFFFF" d="M128 70c-20 0-36 15-36 34v6c0 8-6 14-14 14-6 0-10 4-10 10v12c0 8 6 14 14 14h92c8 0 14-6 14-14v-12c0-6-4-10-10-10-8 0-14-6-14-14v-6c0-19-16-34-36-34z"/>
+
+    <!-- Minimal headset / AI mark (simplified) -->
+    <rect x="84" y="106" width="88" height="6" rx="3" fill="#0b63b3" />
+    <circle cx="92" cy="112" r="3" fill="#094a86" />
+    <circle cx="164" cy="112" r="3" fill="#094a86" />
+
+    <!-- Slight inner shadow for depth (subtle) -->
+    <ellipse cx="128" cy="170" rx="40" ry="8" fill="#0c3f74" opacity="0.08" />
+  </g>
+</svg>
