@@ -64,9 +64,10 @@ export default function PromptWorkspaceSection({ title, description, icon, promp
     <Paper
       elevation={0}
       sx={{
-        borderRadius: 3,
-        bgcolor: 'rgba(255,255,255,0.80)',
-        border: '1px solid rgba(15, 23, 42, 0.06)',
+        borderRadius: 4,
+        bgcolor: '#ffffff',
+        border: '1px solid rgba(15, 23, 42, 0.07)',
+        boxShadow: '0 1px 2px rgba(16,24,40,0.04), 0 18px 40px -28px rgba(16,24,40,0.22)',
         overflow: 'hidden',
       }}
     >
@@ -87,7 +88,7 @@ export default function PromptWorkspaceSection({ title, description, icon, promp
       {saved && (
         <Box sx={{ px: 3, pb: 0.5 }}>
           <Alert severity="success" variant="filled" sx={{ borderRadius: 2 }}>
-            {title} saved successfully
+            Saved! Your changes to “{title}” are in place.
           </Alert>
         </Box>
       )}
@@ -106,8 +107,8 @@ export default function PromptWorkspaceSection({ title, description, icon, promp
             },
           }}
         >
-          <Tab value="system" label="System Prompt" />
-          <Tab value="user" label="User Prompt" />
+          <Tab value="system" label="Main Instructions" />
+          <Tab value="user" label="Request Template" />
           <Tab value="variables" label="Variables" />
         </Tabs>
       </Box>
@@ -116,10 +117,10 @@ export default function PromptWorkspaceSection({ title, description, icon, promp
         <Stack spacing={2.5} sx={{ p: 3 }}>
           <Box>
             <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
-              System Prompt
+              Main Instructions
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Defines the global instructions and tone for {title.toLowerCase()} generation.
+              Sets the overall style and rules the AI follows.
             </Typography>
           </Box>
 
@@ -160,7 +161,7 @@ export default function PromptWorkspaceSection({ title, description, icon, promp
               onClick={() => handleSave({ systemPrompt })}
               sx={{ textTransform: 'none', fontWeight: 600 }}
             >
-              Save Prompt
+              Save Changes
             </Button>
             <Button
               variant="outlined"
@@ -178,10 +179,10 @@ export default function PromptWorkspaceSection({ title, description, icon, promp
         <Stack spacing={2.5} sx={{ p: 3 }}>
           <Box>
             <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
-              User Prompt
+              Request Template
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Describes the request template and how the generation workflow should respond.
+              The exact request sent to the AI each time, using the variables below.
             </Typography>
           </Box>
 
@@ -222,7 +223,7 @@ export default function PromptWorkspaceSection({ title, description, icon, promp
               onClick={() => handleSave({ userPrompt })}
               sx={{ textTransform: 'none', fontWeight: 600 }}
             >
-              Save Prompt
+              Save Changes
             </Button>
             <Button
               variant="outlined"
@@ -243,11 +244,11 @@ export default function PromptWorkspaceSection({ title, description, icon, promp
               Available Variables
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Use these variables in your prompts to reference workspace data during generation.
+              Drop these into the instructions above and they’ll be filled in automatically with your course details.
             </Typography>
           </Box>
 
-          <Box sx={{ bgcolor: 'rgba(59, 130, 246, 0.06)', p: 2, borderRadius: 2, border: '1px solid rgba(59, 130, 246, 0.12)' }}>
+          <Box sx={{ bgcolor: 'rgba(124, 58, 237, 0.06)', p: 2, borderRadius: 2, border: '1px solid rgba(124, 58, 237, 0.12)' }}>
             <Stack spacing={1.5}>
               {variables.map((variable) => (
                 <Box key={variable.name} sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
@@ -258,7 +259,7 @@ export default function PromptWorkspaceSection({ title, description, icon, promp
                       fontFamily: 'monospace',
                       fontSize: '0.8rem',
                       fontWeight: 700,
-                      backgroundColor: 'rgba(37, 99, 235, 0.08)',
+                      backgroundColor: 'rgba(79, 70, 229, 0.08)',
                       color: 'primary.main',
                       flexShrink: 0,
                       mt: 0.5,
@@ -286,10 +287,10 @@ export default function PromptWorkspaceSection({ title, description, icon, promp
                 <InfoOutlinedIcon sx={{ fontSize: 20, color: 'warning.main', mt: 0.25, flexShrink: 0 }} />
                 <Box>
                   <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                    Handlebars Syntax
+                    How to use a variable
                   </Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                    Variables use Handlebars templates. Wrap variable names in double curly braces like{' '}
+                    Just wrap the name in double curly braces, like{' '}
                     <code style={{ fontFamily: 'monospace', backgroundColor: '#f1f5f9', padding: '2px 4px', borderRadius: 4 }}>
                       {'{{variable}}'}
                     </code>

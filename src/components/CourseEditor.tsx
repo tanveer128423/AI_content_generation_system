@@ -30,8 +30,8 @@ export default function CourseEditor() {
   if (!course) {
     return (
       <Paper elevation={0} sx={{ p: 3, borderRadius: 4, bgcolor: 'rgba(255,255,255,0.78)', boxShadow: '0 16px 44px rgba(15, 23, 42, 0.08)' }}>
-        <Alert severity="info" variant="standard" sx={{ bgcolor: 'rgba(37, 99, 235, 0.06)' }}>
-          Create your first course to start building the hierarchy.
+        <Alert severity="info" variant="standard" sx={{ bgcolor: 'rgba(79, 70, 229, 0.06)' }}>
+Create your first course to get started.
         </Alert>
       </Paper>
     );
@@ -54,11 +54,16 @@ export default function CourseEditor() {
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
 
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
-          <Typography variant="h6" sx={{ fontWeight: 800, fontSize: '1.25rem' }}>
-            {courseName || 'Untitled Course'}
-          </Typography>
+          <Box sx={{ minWidth: 0 }}>
+            <Typography sx={{ fontWeight: 700, fontSize: '0.72rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'primary.main' }}>
+              Course
+            </Typography>
+            <Typography variant="h5" sx={{ fontWeight: 800, fontSize: { xs: '1.4rem', md: '1.6rem' }, mt: 0.25 }}>
+              {courseName || 'Untitled Course'}
+            </Typography>
+          </Box>
           <Stack direction="row" spacing={0.75} alignItems="center" flexShrink={0}>
-            <Chip label={`${course.modules.length} modules`} size="small" sx={{ bgcolor: 'rgba(37, 99, 235, 0.08)', fontSize: '0.75rem' }} />
+            <Chip label={`${course.modules.length} modules`} size="small" sx={{ bgcolor: 'rgba(79, 70, 229, 0.08)', fontSize: '0.75rem' }} />
             <Button variant="contained" onClick={handleSave} size="small" sx={{ fontSize: '0.8rem', py: 0.65 }}>
               Save
             </Button>
@@ -71,7 +76,7 @@ export default function CourseEditor() {
         </Box>
       </Box>
 
-      <Stack spacing={1.5} sx={{ bgcolor: 'rgba(255,255,255,0.5)', p: 2, borderRadius: 3, border: '1px solid rgba(15, 23, 42, 0.05)' }}>
+      <Stack spacing={1.75} sx={{ bgcolor: '#ffffff', p: { xs: 2, md: 2.5 }, borderRadius: 3, border: '1px solid rgba(15, 23, 42, 0.07)', boxShadow: '0 1px 2px rgba(16,24,40,0.03)' }}>
         <TextField
           inputRef={nameRef}
           label="Course Name"
@@ -138,7 +143,7 @@ export default function CourseEditor() {
                 key={module.id} 
                 label={module.name || 'Untitled Module'} 
                 size="small"
-                sx={{ bgcolor: 'rgba(15, 118, 110, 0.08)', fontSize: '0.75rem', fontWeight: 600 }} 
+                sx={{ bgcolor: 'rgba(6, 182, 212, 0.08)', fontSize: '0.75rem', fontWeight: 600 }} 
               />
             ))}
             <Button variant="text" startIcon={<AddIcon />} onClick={handleAddModule} size="small" sx={{ height: '24px', fontSize: '0.75rem' }}>
@@ -150,9 +155,9 @@ export default function CourseEditor() {
 
       <DeleteConfirmationDialog
         open={deleteOpen}
-        title="Delete course?"
-        description={`This will remove ${course.name || 'this course'} and all nested modules and learning units.`}
-        confirmLabel="Delete Course"
+        title={`Delete “${course.name || 'Untitled Course'}”?`}
+        items={['All modules and lessons', 'Generated lesson content', 'Generated quizzes']}
+        confirmLabel="Delete course"
         onClose={() => setDeleteOpen(false)}
         onConfirm={() => {
           deleteCourse(course.id);

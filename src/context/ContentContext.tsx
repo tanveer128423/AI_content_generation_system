@@ -371,6 +371,7 @@ function savePersistedState(payload: unknown) {
 export const ContentProvider = ({ children }: { children: React.ReactNode }) => {
   const persisted = useMemo(() => getPersistedState(), []);
   const lastPersistedSignatureRef = useRef('');
+  const persistTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const normalizedInitialData = normalizeContentData(persisted?.contentData || initialData);
 
@@ -492,22 +493,39 @@ export const ContentProvider = ({ children }: { children: React.ReactNode }) => 
   }, [selectedLU?.lu?.id]);
 
   useEffect(() => {
-    const payload = {
-      contentData,
-      selectedCourseId,
-      selectedModuleId,
-      selectedLUId: selectedLU?.lu?.id ?? null,
-      selectedNode
+    // Debounce persistence: a full JSON.stringify of the workspace is expensive,
+    // and it must never run synchronously on the navigation/click path. Rapid
+    // lesson switching cancels pending writes so only the final state is saved.
+    if (persistTimerRef.current !== null) {
+      clearTimeout(persistTimerRef.current);
+    }
+
+    persistTimerRef.current = setTimeout(() => {
+      persistTimerRef.current = null;
+      const payload = {
+        contentData,
+        selectedCourseId,
+        selectedModuleId,
+        selectedLUId: selectedLU?.lu?.id ?? null,
+        selectedNode
+      };
+      const signature = JSON.stringify(payload);
+
+      if (lastPersistedSignatureRef.current === signature) return;
+
+      lastPersistedSignatureRef.current = signature;
+      savePersistedState({
+        ...payload,
+        savedAt: new Date().toISOString()
+      });
+    }, 400);
+
+    return () => {
+      if (persistTimerRef.current !== null) {
+        clearTimeout(persistTimerRef.current);
+        persistTimerRef.current = null;
+      }
     };
-    const signature = JSON.stringify(payload);
-
-    if (lastPersistedSignatureRef.current === signature) return;
-
-    lastPersistedSignatureRef.current = signature;
-    savePersistedState({
-      ...payload,
-      savedAt: new Date().toISOString()
-    });
   }, [contentData, selectedCourseId, selectedModuleId, selectedLU?.lu?.id, selectedNode]);
 
   const updateCourse = useCallback((courseData: any) => {

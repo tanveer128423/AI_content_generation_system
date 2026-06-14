@@ -56,13 +56,13 @@ export default function ApiSettingsDialog({ open, onClose }: ApiSettingsDialogPr
     const result = await validateGeminiApiKey(apiKey);
 
     if (!result.valid) {
-      setStatus({ type: 'error', message: result.error || 'Invalid Gemini API key.' });
+      setStatus({ type: 'error', message: result.error || 'That key didn\u2019t work. Please check it and try again.' });
       setIsSaving(false);
       return;
     }
 
     setStoredGeminiApiKey(apiKey);
-    setStatus({ type: 'success', message: 'Gemini API key saved and validated.' });
+    setStatus({ type: 'success', message: 'Your key is saved and working.' });
     setIsSaving(false);
   };
 
@@ -73,34 +73,34 @@ export default function ApiSettingsDialog({ open, onClose }: ApiSettingsDialogPr
 
     setIsRemoving(true);
     clearStoredGeminiApiKey();
-    setStatus({ type: 'success', message: 'Gemini API key removed from local storage.' });
+    setStatus({ type: 'success', message: 'Your key has been removed from this device.' });
     setApiKey('');
     setIsRemoving(false);
   };
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" PaperProps={{ sx: { borderRadius: 4 } }}>
-      <DialogTitle sx={{ pb: 1.25 }}>API Settings</DialogTitle>
+      <DialogTitle sx={{ pb: 1.25 }}>Your Google AI Key</DialogTitle>
       <DialogContent>
         <Stack spacing={2.25} sx={{ pt: 1 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2, flexWrap: 'wrap' }}>
             <Typography variant="body2" color="text.secondary">
-              Manage the browser-stored Gemini API key used by generation workflows.
+              This key lets the app create lessons and quizzes for you. It’s stored only on this device.
             </Typography>
             <Chip
               icon={<VpnKeyOutlinedIcon />}
-              label={storedKeyExists ? 'Configured' : 'Not configured'}
+              label={storedKeyExists ? 'Key added' : 'No key yet'}
               color={storedKeyExists ? 'success' : 'default'}
               variant={storedKeyExists ? 'filled' : 'outlined'}
             />
           </Box>
 
           <TextField
-            label="Replace Gemini API Key"
+            label="Add or replace your key"
             type="password"
             value={apiKey}
             onChange={(event) => setApiKey(event.target.value)}
-            placeholder="Paste a new Gemini API key"
+            placeholder="Paste your Google AI key here"
             autoComplete="off"
             fullWidth
           />
@@ -111,7 +111,7 @@ export default function ApiSettingsDialog({ open, onClose }: ApiSettingsDialogPr
           <Divider />
 
           <Typography variant="body2" color="text.secondary">
-            Validate the replacement key before saving it. Removing the key will return the app to onboarding mode on the next screen update.
+            We’ll check the key works before saving it. If you remove the key, you’ll be asked to add one again before creating content.
           </Typography>
         </Stack>
       </DialogContent>
@@ -122,7 +122,7 @@ export default function ApiSettingsDialog({ open, onClose }: ApiSettingsDialogPr
           disabled={isRemoving || !storedKeyExists}
           startIcon={isRemoving ? <CircularProgress size={16} color="inherit" /> : <DeleteOutlineIcon />}
         >
-          Remove Key
+          Remove
         </Button>
 
         <Box sx={{ display: 'flex', gap: 1 }}>
@@ -133,7 +133,7 @@ export default function ApiSettingsDialog({ open, onClose }: ApiSettingsDialogPr
             disabled={isSaving || !apiKey.trim()}
             startIcon={isSaving ? <CircularProgress size={16} color="inherit" /> : <SaveOutlinedIcon />}
           >
-            {isSaving ? 'Validating...' : 'Validate & Save'}
+            {isSaving ? 'Checking…' : 'Save Key'}
           </Button>
         </Box>
       </DialogActions>

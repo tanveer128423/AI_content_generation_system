@@ -3,6 +3,8 @@ import { Box, useMediaQuery, useTheme } from '@mui/material';
 import { ContentProvider } from './context/ContentContext';
 import Sidebar from './components/Sidebar';
 import MainWorkspace from './components/MainWorkspace';
+import CommandPalette from './components/CommandPalette';
+import ApiSettingsDialog from './components/ApiSettingsDialog';
 import GeminiApiOnboarding from './components/GeminiApiOnboarding';
 import { hasStoredGeminiApiKey, setStoredGeminiApiKey, subscribeToGeminiApiKeyChanges } from './ai/geminiApiKey';
 import './App.css';
@@ -62,6 +64,20 @@ function MainAppShell() {
   });
   const [sidebarWidth, setSidebarWidth] = useState(() => readStoredSidebarWidth());
   const [isResizingSidebar, setIsResizingSidebar] = useState(false);
+  const [generatorOpen, setGeneratorOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [apiSettingsOpen, setApiSettingsOpen] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        setPaletteOpen(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const applyLiveSidebarWidth = useCallback((width: number) => {
     const sidebarShell = sidebarShellRef.current;
@@ -194,37 +210,13 @@ function MainAppShell() {
           isolation: 'isolate',
         }}
       >
+        {/* Quiet, single-neutral canvas — content and AI are the only focal points. */}
         <Box
           sx={{
             position: 'absolute',
             inset: 0,
             pointerEvents: 'none',
-            background:
-              'radial-gradient(circle at 14% 10%, rgba(59, 130, 246, 0.14), transparent 22%), radial-gradient(circle at 84% 8%, rgba(15, 118, 110, 0.12), transparent 20%), linear-gradient(180deg, rgba(255,255,255,0.62) 0%, rgba(255,255,255,0.40) 35%, rgba(255,255,255,0.68) 100%)',
-          }}
-        />
-        <Box
-          sx={{
-            position: 'absolute',
-            inset: 'auto auto 8% 10%',
-            width: 280,
-            height: 280,
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(37, 99, 235, 0.12), transparent 70%)',
-            filter: 'blur(18px)',
-            pointerEvents: 'none',
-          }}
-        />
-        <Box
-          sx={{
-            position: 'absolute',
-            inset: '8% 8% auto auto',
-            width: 200,
-            height: 200,
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(15, 118, 110, 0.10), transparent 68%)',
-            filter: 'blur(16px)',
-            pointerEvents: 'none',
+            backgroundColor: '#FBFBFB',
           }}
         />
         <Box sx={{ flex: 1, display: 'flex', minHeight: 0, position: 'relative', zIndex: 1, gap: { xs: 0, md: 1.5 }, p: { xs: 0, md: 1.5 } }}>
@@ -244,12 +236,16 @@ function MainAppShell() {
                 md: isResizingSidebar ? 'none' : 'width 160ms ease, flex-basis 160ms ease',
               },
               willChange: isResizingSidebar ? 'width' : 'auto',
-              borderRadius: { md: 4 },
-              boxShadow: { md: '0 12px 40px rgba(15, 23, 42, 0.06)' },
+              borderRadius: { md: 3 },
+              boxShadow: { md: '0 1px 2px rgba(16,24,40,0.04), 0 8px 24px -16px rgba(16,24,40,0.18)' },
             }}
           >
-            <Box sx={{ height: '100%', overflow: 'hidden', borderRadius: { md: 4 } }}>
-              <Sidebar width={sidebarWidth} />
+            <Box sx={{ height: '100%', overflow: 'hidden', borderRadius: { md: 3 }, border: { md: '1px solid #ECECEE' } }}>
+              <Sidebar
+                width={sidebarWidth}
+                onGenerateCourse={() => setGeneratorOpen(true)}
+                onOpenCommandPalette={() => setPaletteOpen(true)}
+              />
             </Box>
 
             {isDesktopLayout && (
@@ -283,10 +279,10 @@ function MainAppShell() {
                   },
                   '&:hover': {
                     opacity: 1,
-                    backgroundColor: 'rgba(59,130,246,0.04)',
+                    backgroundColor: 'rgba(91,91,214,0.04)',
                   },
                   '&:hover::before, &[data-active="true"]::before': {
-                    backgroundColor: 'rgba(59,130,246,0.55)',
+                    backgroundColor: 'rgba(91,91,214,0.55)',
                   },
                   '&[data-active="true"]': {
                     opacity: 1,
@@ -301,16 +297,23 @@ function MainAppShell() {
               flex: 1,
               minWidth: 0,
               minHeight: 0,
-              bgcolor: 'rgba(255,255,255,0.5)',
-              borderRadius: { md: 4 },
+              bgcolor: '#FFFFFF',
+              borderRadius: { md: 3 },
               overflow: 'hidden',
-              boxShadow: { md: '0 14px 50px rgba(15, 23, 42, 0.06)' },
-              border: '1px solid rgba(255,255,255,0.3)',
+              boxShadow: { md: '0 1px 2px rgba(16,24,40,0.04), 0 8px 24px -16px rgba(16,24,40,0.18)' },
+              border: '1px solid #ECECEE',
             }}
           >
-            <MainWorkspace />
+            <MainWorkspace generatorOpen={generatorOpen} onCloseGenerator={() => setGeneratorOpen(false)} />
           </Box>
         </Box>
+        <CommandPalette
+          open={paletteOpen}
+          onClose={() => setPaletteOpen(false)}
+          onCreateWithAI={() => setGeneratorOpen(true)}
+          onOpenApiSettings={() => setApiSettingsOpen(true)}
+        />
+        <ApiSettingsDialog open={apiSettingsOpen} onClose={() => setApiSettingsOpen(false)} />
       </Box>
     </ContentProvider>
   );
