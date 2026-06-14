@@ -1,14 +1,19 @@
 import { memo, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Alert, Box, Breadcrumbs, Button, Container, Paper, Stack, Typography } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
+import { Box, Breadcrumbs, Container, Stack, Typography } from '@mui/material';
 import { useContent } from '../context/ContentContext';
 import CourseEditor from './CourseEditor';
 import ModuleEditor from './ModuleEditor';
 import LearningUnitWorkspace from './LearningUnitWorkspace';
 import PromptConfigurationPanel from './PromptConfigurationPanel';
 import QuizPromptWorkspace from './QuizPromptWorkspace';
+import CourseGenerator from './CourseGenerator';
 
-function MainWorkspace() {
+interface MainWorkspaceProps {
+  generatorOpen?: boolean;
+  onCloseGenerator?: () => void;
+}
+
+function MainWorkspace({ generatorOpen = false, onCloseGenerator }: MainWorkspaceProps) {
   const {
     contentData,
     selectedCourseId,
@@ -18,7 +23,6 @@ function MainWorkspace() {
     currentView,
     getCourse,
     getModule,
-    addCourse
   } = useContent();
 
   const currentCourse = useMemo(() => {
@@ -125,21 +129,12 @@ function MainWorkspace() {
       return <QuizPromptWorkspace />;
     }
 
-    if (!contentData.courses.length) {
+    if (generatorOpen || !contentData.courses.length) {
       return (
-        <Paper variant="outlined" sx={{ p: 4, borderRadius: 3 }}>
-          <Stack spacing={2} alignItems="flex-start">
-            <Typography variant="h5" sx={{ fontWeight: 800 }}>
-              Create your first course
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Start with a course, then add modules and learning units.
-            </Typography>
-            <Button variant="contained" startIcon={<AddIcon />} onClick={() => addCourse({ name: 'Course 1', description: '', outcomes: [], modules: [] })}>
-              Add Course
-            </Button>
-          </Stack>
-        </Paper>
+        <CourseGenerator
+          closable={contentData.courses.length > 0}
+          onClose={onCloseGenerator}
+        />
       );
     }
 
@@ -158,17 +153,27 @@ function MainWorkspace() {
     <Box sx={{ height: '100%', minHeight: 0, overflow: 'hidden', bgcolor: 'transparent' }}>
       <Container maxWidth={false} sx={{ py: 3, height: '100%', minHeight: 0 }}>
         <Stack spacing={3} sx={{ height: '100%', minHeight: 0 }}>
-          {currentView === 'content' && (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
-                <Breadcrumbs aria-label="workspace breadcrumb" separator="/" sx={{ '& .MuiBreadcrumbs-ol': { gap: 0.75 } }}>
+          {currentView === 'content' && !generatorOpen && breadcrumbItems.length > 0 && (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
+              <Box
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  px: 1.75,
+                  py: 0.75,
+                  borderRadius: 999,
+                  bgcolor: 'rgba(79,70,229,0.06)',
+                  border: '1px solid rgba(79,70,229,0.14)'
+                }}
+              >
+                <Breadcrumbs aria-label="workspace breadcrumb" separator="›" sx={{ '& .MuiBreadcrumbs-ol': { gap: 0.75 }, '& .MuiBreadcrumbs-separator': { color: 'rgba(79,70,229,0.5)' } }}>
                   {breadcrumbItems.map((item, index) => (
                     <Typography
                       key={item.label}
                       variant="body2"
                       sx={{
                         fontWeight: index === breadcrumbItems.length - 1 ? 700 : 500,
-                        color: index === breadcrumbItems.length - 1 ? 'text.primary' : 'text.secondary'
+                        color: index === breadcrumbItems.length - 1 ? 'primary.dark' : 'text.secondary'
                       }}
                     >
                       {item.label}
@@ -176,29 +181,23 @@ function MainWorkspace() {
                   ))}
                 </Breadcrumbs>
               </Box>
-              
             </Box>
           )}
 
-          {currentView !== 'content' || contentData.courses.length > 0 ? (
-            <Box
-              sx={{
-                flex: 1,
-                minHeight: 0,
-                overflow: 'auto',
-                transition: shouldAnimateWorkspace ? 'opacity 190ms ease-out, transform 190ms ease-out' : 'none',
-                opacity: shouldAnimateWorkspace && luTransitionPhase === 'prepare' ? 0 : 1,
-                transform: shouldAnimateWorkspace && luTransitionPhase === 'prepare' ? 'translateY(6px)' : 'translateY(0)',
-                willChange: shouldAnimateWorkspace && luTransitionPhase !== 'idle' ? 'opacity, transform' : 'auto'
-              }}
-            >
-              {renderEditor()}
-            </Box>
-          ) : (
-            <Alert severity="info" variant="outlined">
-              Create your first course to start building content.
-            </Alert>
-          )}
+          <Box
+            className="rise-in"
+            sx={{
+              flex: 1,
+              minHeight: 0,
+              overflow: 'auto',
+              transition: shouldAnimateWorkspace ? 'opacity 190ms ease-out, transform 190ms ease-out' : 'none',
+              opacity: shouldAnimateWorkspace && luTransitionPhase === 'prepare' ? 0 : 1,
+              transform: shouldAnimateWorkspace && luTransitionPhase === 'prepare' ? 'translateY(6px)' : 'translateY(0)',
+              willChange: shouldAnimateWorkspace && luTransitionPhase !== 'idle' ? 'opacity, transform' : 'auto'
+            }}
+          >
+            {renderEditor()}
+          </Box>
         </Stack>
       </Container>
     </Box>

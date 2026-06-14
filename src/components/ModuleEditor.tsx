@@ -37,7 +37,7 @@ export default function ModuleEditor() {
   if (!course || !module) {
     return (
       <Paper elevation={0} sx={{ p: 3, borderRadius: 4, bgcolor: 'rgba(255,255,255,0.78)', boxShadow: '0 16px 44px rgba(15, 23, 42, 0.08)' }}>
-        <Alert severity="info" variant="standard" sx={{ bgcolor: 'rgba(15, 118, 110, 0.06)' }}>
+        <Alert severity="info" variant="standard" sx={{ bgcolor: 'rgba(6, 182, 212, 0.06)' }}>
           Add a module to continue.
         </Alert>
       </Paper>
@@ -65,11 +65,16 @@ export default function ModuleEditor() {
     <Stack spacing={2.5}>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
-          <Typography variant="h6" sx={{ fontWeight: 800, fontSize: '1.25rem' }}>
-            {moduleName || 'Untitled Module'}
-          </Typography>
+          <Box sx={{ minWidth: 0 }}>
+            <Typography sx={{ fontWeight: 700, fontSize: '0.72rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'secondary.main' }}>
+              Module
+            </Typography>
+            <Typography variant="h5" sx={{ fontWeight: 800, fontSize: { xs: '1.4rem', md: '1.6rem' }, mt: 0.25 }}>
+              {moduleName || 'Untitled Module'}
+            </Typography>
+          </Box>
           <Stack direction="row" spacing={0.75} alignItems="center" flexShrink={0}>
-            <Chip label={`${module.learning_units.length} units`} size="small" sx={{ bgcolor: 'rgba(37, 99, 235, 0.08)', fontSize: '0.75rem' }} />
+            <Chip label={`${module.learning_units.length} units`} size="small" sx={{ bgcolor: 'rgba(79, 70, 229, 0.08)', fontSize: '0.75rem' }} />
             <Button variant="contained" onClick={handleSave} size="small" sx={{ fontSize: '0.8rem', py: 0.65 }}>
               Save
             </Button>
@@ -82,7 +87,7 @@ export default function ModuleEditor() {
         </Box>
       </Box>
 
-      <Stack spacing={1.5} sx={{ bgcolor: 'rgba(255,255,255,0.5)', p: 2, borderRadius: 3, border: '1px solid rgba(15, 23, 42, 0.05)' }}>
+      <Stack spacing={1.75} sx={{ bgcolor: '#ffffff', p: { xs: 2, md: 2.5 }, borderRadius: 3, border: '1px solid rgba(15, 23, 42, 0.07)', boxShadow: '0 1px 2px rgba(16,24,40,0.03)' }}>
         <TextField
           inputRef={nameRef}
           label="Module Name"
@@ -149,7 +154,7 @@ export default function ModuleEditor() {
                 key={learningUnit.id} 
                 label={learningUnit.name || 'Untitled Learning Unit'} 
                 size="small"
-                sx={{ bgcolor: 'rgba(37, 99, 235, 0.08)', fontSize: '0.75rem', fontWeight: 600 }} 
+                sx={{ bgcolor: 'rgba(79, 70, 229, 0.08)', fontSize: '0.75rem', fontWeight: 600 }} 
               />
             ))}
             <Button variant="text" startIcon={<AddIcon />} onClick={handleAddLearningUnit} size="small" sx={{ height: '24px', fontSize: '0.75rem' }}>
@@ -161,9 +166,9 @@ export default function ModuleEditor() {
 
       <DeleteConfirmationDialog
         open={deleteOpen}
-        title="Delete module?"
-        description={`This will remove ${module.name || 'this module'} and all nested learning units.`}
-        confirmLabel="Delete Module"
+        title={`Delete “${module.name || 'Untitled Module'}”?`}
+        items={['All lessons in this module', 'Their generated content & quizzes']}
+        confirmLabel="Delete module"
         onClose={() => setDeleteOpen(false)}
         onConfirm={() => {
           deleteModule(course.id, module.id);

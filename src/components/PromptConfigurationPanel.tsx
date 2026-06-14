@@ -18,17 +18,17 @@ export default function PromptConfigurationPanel() {
   const contentPrompts = prompts.content ?? { systemPrompt: '', userPrompt: '' };
 
   return (
-    <Box sx={{ p: { xs: 2, md: 3 }, height: '100%', overflowY: 'auto', bgcolor: '#f8fafc' }}>
+    <Box sx={{ p: { xs: 0.5, md: 1 }, height: '100%', overflowY: 'auto', bgcolor: 'transparent' }}>
       <Stack spacing={3}>
         <PromptWorkspaceSection
-          title="Content Prompt"
-          description="Configure the shared system and user prompts used for content generation across all learning units."
+          title="Lesson Instructions"
+          description="Advanced (optional). These are the instructions the AI follows when writing every lesson. The defaults work well — only change them if you want a different style."
           icon={<CodeIcon sx={{ color: 'primary.main', fontSize: 28 }} />}
           prompts={contentPrompts}
           onSave={updatePrompts}
           onReset={() => updatePrompts(contentPrompts)}
           variables={VARIABLE_EXAMPLES}
-          emptyMessage="These prompts drive the existing content generation workflow and remain fully backward compatible."
+          emptyMessage="Tip: the defaults are a great starting point. You can always reset to them."
         />
       </Stack>
     </Box>

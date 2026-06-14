@@ -33,11 +33,11 @@ export default function QuizPromptWorkspace() {
   }, [workspacePrompts?.quiz]);
 
   return (
-    <Box sx={{ p: { xs: 2, md: 3 }, height: '100%', overflowY: 'auto', bgcolor: '#f8fafc' }}>
+    <Box sx={{ p: { xs: 0.5, md: 1 }, height: '100%', overflowY: 'auto', bgcolor: 'transparent' }}>
       <Stack spacing={3}>
         <PromptWorkspaceSection
-          title="Quiz Prompt"
-          description="Configure the dedicated system and user prompts used for quiz generation from generated markdown content."
+          title="Quiz Instructions"
+          description="Advanced (optional). These are the instructions the AI follows when creating quiz questions from a lesson. The defaults work well — only change them if you want different questions."
           icon={<QuizOutlinedIcon sx={{ color: 'primary.main', fontSize: 28 }} />}
           prompts={syncedPrompts}
           onSave={(patch) => {
@@ -49,7 +49,7 @@ export default function QuizPromptWorkspace() {
             updateQuizPrompts(defaultQuizPrompts);
           }}
           variables={VARIABLE_EXAMPLES}
-          emptyMessage="These prompts are isolated from content generation and only drive quiz creation."
+          emptyMessage="Tip: the defaults are a great starting point. You can always reset to them."
         />
       </Stack>
     </Box>

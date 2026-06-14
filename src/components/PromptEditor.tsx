@@ -26,7 +26,7 @@ export default function PromptEditor({ open, onClose }: PromptEditorProps) {
         }
       }}
     >
-      <Box sx={{ px: 3, py: 2.5, background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.10), rgba(15, 118, 110, 0.08))', borderBottom: '1px solid rgba(15, 23, 42, 0.06)' }}>
+      <Box sx={{ px: 3, py: 2.5, background: 'linear-gradient(135deg, rgba(79, 70, 229, 0.10), rgba(6, 182, 212, 0.08))', borderBottom: '1px solid rgba(15, 23, 42, 0.06)' }}>
         <Typography variant="overline" sx={{ fontWeight: 800, letterSpacing: 1.2, color: 'primary.main' }}>
           Prompt Studio
         </Typography>
