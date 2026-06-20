@@ -8,6 +8,7 @@ import { quizSchema } from '../validation/quizSchema';
 import type { QuizGenerationInput, QuizGenerationResult, TemplateData, PromptSet } from './types';
 const GENERIC_QUIZ_ERROR_MESSAGE = 'Unable to generate a valid quiz. Please try again.';
 const REQUIRED_QUESTION_COUNT = 5;
+const MAX_QUIZ_ATTEMPTS = 3;
 
 type NormalizedQuizQuestion = QuizGenerationResult['questions'][number];
 
@@ -160,35 +161,35 @@ export async function generateLearningUnitQuiz(input: QuizGenerationInput): Prom
       maxRetries: 0
     });
 
-    logger.model(`Sending quiz request to ${MODEL_CONFIG.model}...`);
-    // Final compiled prompt prepared (truncated available in `fullPrompt`)
+    // LLM output is non-deterministic, so a single response may be malformed or
+    // fall short of the required 5 valid questions. Retry a few times before
+    // surfacing an error to the user.
+    let lastAttemptError: unknown = null;
 
-    const response = await model.invoke(fullPrompt);
-    const rawContent = parseModelResponse(response);
+    for (let attempt = 1; attempt <= MAX_QUIZ_ATTEMPTS; attempt += 1) {
+      logger.model(`Sending quiz request to ${MODEL_CONFIG.model} (attempt ${attempt}/${MAX_QUIZ_ATTEMPTS})...`);
 
-    let parsedQuiz: unknown;
-    try {
-      parsedQuiz = parseQuizResponse(rawContent);
-    } catch (error) {
-      logger.warn('Quiz response parsing failed before normalization', error);
-      throw new Error(GENERIC_QUIZ_ERROR_MESSAGE);
+      try {
+        const response = await model.invoke(fullPrompt);
+        const rawContent = parseModelResponse(response);
+
+        const parsedQuiz = parseQuizResponse(rawContent);
+        const normalizedQuiz = normalizeQuizPayload(parsedQuiz);
+        const parsed = quizSchema.safeParse(normalizedQuiz);
+
+        if (!parsed.success) {
+          throw new Error(GENERIC_QUIZ_ERROR_MESSAGE);
+        }
+
+        logger.success(`Quiz generation success (${parsed.data.questions.length} questions, attempt ${attempt})`);
+        return { success: true, questions: parsed.data.questions, model: MODEL_CONFIG.model };
+      } catch (attemptError) {
+        lastAttemptError = attemptError;
+        logger.warn(`Quiz attempt ${attempt} failed`, attemptError);
+      }
     }
-    const parsedQuizRecord = parsedQuiz as { questions?: unknown[] } | null;
 
-    // Parsed quiz response available in `parsedQuiz`
-
-    const normalizedQuiz = normalizeQuizPayload(parsedQuiz);
-    const parsed = quizSchema.safeParse(normalizedQuiz);
-
-    // Validation result available in `parsed`
-
-    if (!parsed.success) {
-      console.error('Quiz validation failed', parsed.error);
-      throw new Error(GENERIC_QUIZ_ERROR_MESSAGE);
-    }
-
-    logger.success(`Quiz generation success (${parsed.data.questions.length} questions)`);
-    return { success: true, questions: parsed.data.questions, model: MODEL_CONFIG.model };
+    throw lastAttemptError instanceof Error ? lastAttemptError : new Error(GENERIC_QUIZ_ERROR_MESSAGE);
   } catch (err) {
     const formatted = formatError(err);
     logger.error(`Quiz generation error: ${formatted.message}`);
