@@ -1,4 +1,4 @@
-import { memo, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Box, Breadcrumbs, Container, Stack, Typography } from '@mui/material';
 import { useContent } from '../context/ContentContext';
 import CourseEditor from './CourseEditor';
@@ -67,6 +67,28 @@ function MainWorkspace({ generatorOpen = false, onCloseGenerator }: MainWorkspac
     return items;
   }, [currentCourse?.name, currentLearningUnit?.name, currentModule?.name, selectedNode?.type]);
 
+  // A fresh visitor (only the empty default course, no real content) should land
+  // on the generator — which hosts the "See a sample" entry — instead of a blank
+  // editor. They can dismiss it to reach the empty editor if they wish.
+  const isEmptyWorkspace = useMemo(() => {
+    const courses = contentData.courses;
+    if (courses.length === 0) return true;
+    if (courses.length > 1) return false;
+    const only = courses[0];
+    return !only?.name?.trim() && (only?.modules?.length ?? 0) === 0;
+  }, [contentData.courses]);
+
+  const [generatorDismissed, setGeneratorDismissed] = useState(false);
+
+  // Re-arm the auto-generator if the workspace becomes empty again (e.g. reset).
+  useEffect(() => {
+    if (!isEmptyWorkspace) {
+      setGeneratorDismissed(false);
+    }
+  }, [isEmptyWorkspace]);
+
+  const showGenerator = generatorOpen || (isEmptyWorkspace && !generatorDismissed);
+
   const [luTransitionPhase, setLuTransitionPhase] = useState<'idle' | 'prepare' | 'enter'>('idle');
   const previousLearningUnitIdRef = useRef<string | undefined>(selectedLU?.lu?.id);
   const transitionFrameRef = useRef<number | null>(null);
@@ -129,11 +151,14 @@ function MainWorkspace({ generatorOpen = false, onCloseGenerator }: MainWorkspac
       return <QuizPromptWorkspace />;
     }
 
-    if (generatorOpen || !contentData.courses.length) {
+    if (showGenerator) {
       return (
         <CourseGenerator
           closable={contentData.courses.length > 0}
-          onClose={onCloseGenerator}
+          onClose={() => {
+            setGeneratorDismissed(true);
+            onCloseGenerator?.();
+          }}
         />
       );
     }
@@ -153,7 +178,7 @@ function MainWorkspace({ generatorOpen = false, onCloseGenerator }: MainWorkspac
     <Box sx={{ height: '100%', minHeight: 0, overflow: 'hidden', bgcolor: 'transparent' }}>
       <Container maxWidth={false} sx={{ py: 3, height: '100%', minHeight: 0 }}>
         <Stack spacing={3} sx={{ height: '100%', minHeight: 0 }}>
-          {currentView === 'content' && !generatorOpen && breadcrumbItems.length > 0 && (
+          {currentView === 'content' && !showGenerator && breadcrumbItems.length > 0 && (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
               <Box
                 sx={{
