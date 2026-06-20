@@ -823,11 +823,10 @@ export default function LearningUnitWorkspace() {
           <Box sx={{ border: '1px dashed #E0E0E3', borderRadius: 3, p: { xs: 3, md: 4 }, textAlign: 'center', bgcolor: '#FCFCFD' }}>
             <Typography variant="h6" sx={{ fontWeight: 800, letterSpacing: '-0.02em' }}>This lesson is a blank canvas</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, mb: 2.5 }}>
-              Let the Copilot draft it — it already knows the course and module context.
+              Use <strong>Generate lesson</strong> above, or start from one of these:
             </Typography>
             <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap justifyContent="center">
-              <SuggestionChip primary icon={<AutoAwesomeRoundedIcon fontSize="small" />} label="Generate lesson" busy={copilotBusy === 'generate'} disabled={Boolean(copilotBusy)} onClick={() => { logAction('Generated lesson'); void runGenerate('generate'); }} />
-              <SuggestionChip icon={<FlagOutlinedIcon fontSize="small" />} label="Create learning objectives" busy={copilotBusy === 'objectives'} disabled={Boolean(copilotBusy)} onClick={() => { logAction('Created objectives'); void runGenerate('objectives', 'Begin the lesson with a clear "Learning Objectives" section listing what the learner will be able to do.'); }} />
+              <SuggestionChip primary icon={<FlagOutlinedIcon fontSize="small" />} label="Create learning objectives" busy={copilotBusy === 'objectives'} disabled={Boolean(copilotBusy)} onClick={() => { logAction('Created objectives'); void runGenerate('objectives', 'Begin the lesson with a clear "Learning Objectives" section listing what the learner will be able to do.'); }} />
               <SuggestionChip icon={<HandymanRoundedIcon fontSize="small" />} label="Create practical project" busy={copilotBusy === 'projectGen'} disabled={Boolean(copilotBusy)} onClick={() => { logAction('Created project'); void runGenerate('projectGen', 'Structure this lesson primarily as a hands-on, practical project with step-by-step instructions.'); }} />
               <SuggestionChip icon={<QuizOutlinedIcon fontSize="small" />} label="Generate lesson + quiz" busy={copilotBusy === 'genquiz'} disabled={Boolean(copilotBusy)} onClick={() => { logAction('Generated lesson + quiz'); void runGenerate('genquiz', undefined, true); }} />
             </Stack>
