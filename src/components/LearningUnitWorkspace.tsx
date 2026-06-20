@@ -736,9 +736,21 @@ export default function LearningUnitWorkspace() {
                   </Stack>
                 </Box>
               ) : (
-                <Box>
+                <Stack direction="row" spacing={1} alignItems="center">
                   <Button onClick={handleSaveDraft} variant="text" size="small" sx={{ textTransform: 'none', fontWeight: 600 }}>Save draft</Button>
-                </Box>
+                  {!hasContent && (
+                    <Button
+                      onClick={() => { logAction('Generated lesson'); void runGenerate('generate'); }}
+                      variant="contained"
+                      size="small"
+                      disabled={Boolean(copilotBusy) || isStreaming}
+                      startIcon={<AutoAwesomeRoundedIcon fontSize="small" />}
+                      sx={{ ml: 'auto', textTransform: 'none', fontWeight: 700, background: AI_GRADIENT, boxShadow: '0 8px 20px -12px rgba(91,91,214,0.7)', '&:hover': { background: AI_GRADIENT, filter: 'brightness(1.05)' } }}
+                    >
+                      Generate lesson
+                    </Button>
+                  )}
+                </Stack>
               )}
             </Stack>
           </Collapse>
