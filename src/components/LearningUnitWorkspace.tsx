@@ -719,7 +719,7 @@ export default function LearningUnitWorkspace() {
                   <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5, mb: 1.5 }}>
                     Regenerate the lesson to apply your updated properties.
                   </Typography>
-                  <Stack direction="row" spacing={1}>
+                  <Stack direction="row" spacing={1} justifyContent="flex-end">
                     <Button onClick={handleSaveDraft} variant="outlined" size="small" sx={{ textTransform: 'none', fontWeight: 600 }}>
                       Save draft
                     </Button>
@@ -736,7 +736,7 @@ export default function LearningUnitWorkspace() {
                   </Stack>
                 </Box>
               ) : (
-                <Stack direction="row" spacing={1} alignItems="center">
+                <Stack direction="row" spacing={1} alignItems="center" justifyContent="flex-end">
                   <Button onClick={handleSaveDraft} variant="text" size="small" sx={{ textTransform: 'none', fontWeight: 600 }}>Save draft</Button>
                   {!hasContent && (
                     <Button
@@ -745,7 +745,7 @@ export default function LearningUnitWorkspace() {
                       size="small"
                       disabled={Boolean(copilotBusy) || isStreaming}
                       startIcon={<AutoAwesomeRoundedIcon fontSize="small" />}
-                      sx={{ ml: 'auto', textTransform: 'none', fontWeight: 700, background: AI_GRADIENT, boxShadow: '0 8px 20px -12px rgba(91,91,214,0.7)', '&:hover': { background: AI_GRADIENT, filter: 'brightness(1.05)' } }}
+                      sx={{ textTransform: 'none', fontWeight: 700, background: AI_GRADIENT, boxShadow: '0 8px 20px -12px rgba(91,91,214,0.7)', '&:hover': { background: AI_GRADIENT, filter: 'brightness(1.05)' } }}
                     >
                       Generate lesson
                     </Button>
