@@ -29,6 +29,7 @@ import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined';
 import { useContent } from '../context/ContentContext';
+import { useApiKeyGate } from '../context/ApiKeyGate';
 import { generateLearningUnitContent } from '../ai/generate';
 import { generateLearningUnitQuiz } from '../ai/generateQuiz';
 import { transformLessonContent } from '../ai/transformContent';
@@ -134,6 +135,7 @@ export default function LearningUnitWorkspace() {
     getCourse, getModule, updateLearningUnit, deleteLearningUnit,
     duplicateLearningUnit, saveStructure,
   } = useContent();
+  const { ensureApiKey } = useApiKeyGate();
 
   const hydrated = getHydratedState(selectedLU);
 
@@ -221,7 +223,15 @@ export default function LearningUnitWorkspace() {
     setStreamText('');
     setCopilotBusy(null);
     setEditingContent(false);
-    setPropsOpen(false);
+    // Auto-expand Properties for a brand-new, blank lesson so the title, duration
+    // and artifacts are ready to edit immediately; keep it collapsed for lessons
+    // that already have content.
+    const isBlankNewLesson =
+      !next.generatedContent?.trim() &&
+      !next.unitDescription?.trim() &&
+      next.artifacts.length === 0 &&
+      (!next.unitName?.trim() || next.unitName.trim() === 'New Learning Unit');
+    setPropsOpen(isBlankNewLesson);
     setSlashOpen(false);
     setRecentActions([]);
     hydratedLuIdRef.current = selectedLU?.lu?.id ?? null;
@@ -313,6 +323,8 @@ export default function LearningUnitWorkspace() {
       return;
     }
 
+    if (!(await ensureApiKey())) return;
+
     setGenerationError('');
     setCopilotBusy(busyId);
     autoQuizRef.current = thenQuiz;
@@ -360,6 +372,7 @@ export default function LearningUnitWorkspace() {
       setGenerationError('Generate the lesson first, then ask the Copilot to refine it.');
       return;
     }
+    if (!(await ensureApiKey())) return;
     setGenerationError('');
     setCopilotBusy(busyId);
     try {
@@ -391,6 +404,7 @@ export default function LearningUnitWorkspace() {
       setQuizStatus('error');
       return;
     }
+    if (!(await ensureApiKey())) return;
     setQuizError('');
     setQuizStatus('loading');
     setCopilotBusy('quiz');

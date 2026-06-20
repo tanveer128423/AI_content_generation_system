@@ -5,8 +5,7 @@ import Sidebar from './components/Sidebar';
 import MainWorkspace from './components/MainWorkspace';
 import CommandPalette from './components/CommandPalette';
 import ApiSettingsDialog from './components/ApiSettingsDialog';
-import GeminiApiOnboarding from './components/GeminiApiOnboarding';
-import { hasStoredGeminiApiKey, setStoredGeminiApiKey, subscribeToGeminiApiKeyChanges } from './ai/geminiApiKey';
+import { ApiKeyGateProvider } from './context/ApiKeyGate';
 import './App.css';
 
 const MIN_SIDEBAR_WIDTH = 260;
@@ -199,6 +198,7 @@ function MainAppShell() {
 
   return (
     <ContentProvider>
+      <ApiKeyGateProvider>
       <Box
         sx={{
           minHeight: '100vh',
@@ -315,27 +315,12 @@ function MainAppShell() {
         />
         <ApiSettingsDialog open={apiSettingsOpen} onClose={() => setApiSettingsOpen(false)} />
       </Box>
+      </ApiKeyGateProvider>
     </ContentProvider>
   );
 }
 
 function App() {
-  const [hasApiKey, setHasApiKey] = useState(() => hasStoredGeminiApiKey());
-
-  useEffect(() => {
-    return subscribeToGeminiApiKeyChanges(() => {
-      setHasApiKey(hasStoredGeminiApiKey());
-    });
-  }, []);
-
-  if (!hasApiKey) {
-    return (
-      <GeminiApiOnboarding
-        onKeyValidated={() => setHasApiKey(true)}
-      />
-    );
-  }
-
   return <MainAppShell />;
 }
 

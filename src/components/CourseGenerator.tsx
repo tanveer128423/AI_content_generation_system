@@ -24,8 +24,11 @@ import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined';
 import RocketLaunchRoundedIcon from '@mui/icons-material/RocketLaunchRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ReplayRoundedIcon from '@mui/icons-material/ReplayRounded';
+import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined';
 import { useContent } from '../context/ContentContext';
+import { useApiKeyGate } from '../context/ApiKeyGate';
 import { generateCourseStructure, type GeneratedCourse } from '../ai/generateCourse';
+import { SAMPLE_COURSE } from '../data/sampleCourse';
 
 const AI_GRADIENT = 'linear-gradient(120deg, #5B5BD6 0%, #7C5CFF 55%, #22B8CF 130%)';
 
@@ -39,7 +42,11 @@ const EXAMPLE_PROMPTS = [
 ];
 
 const AUDIENCE_OPTIONS = ['Beginners', 'Intermediate', 'Advanced'];
-const DURATION_OPTIONS = [3, 6, 10, 20];
+const DURATION_OPTIONS: Array<{ value: number; label: string }> = [
+  { value: 0.5, label: '30 min' },
+  { value: 1, label: '1 hr' },
+  { value: 1.5, label: '1.5 hr' },
+];
 
 const GENERATING_STEPS = [
   'Understanding your topic…',
@@ -70,11 +77,12 @@ interface CourseGeneratorProps {
 
 export default function CourseGenerator({ onClose, closable = false }: CourseGeneratorProps) {
   const { addCourse } = useContent();
+  const { ensureApiKey } = useApiKeyGate();
 
   const [phase, setPhase] = useState<Phase>('input');
   const [topic, setTopic] = useState('');
   const [audience, setAudience] = useState<string>('Beginners');
-  const [durationHours, setDurationHours] = useState<number>(6);
+  const [durationHours, setDurationHours] = useState<number>(1);
   const [includeProjects, setIncludeProjects] = useState(true);
   const [includeQuizzes, setIncludeQuizzes] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -103,8 +111,22 @@ export default function CourseGenerator({ onClose, closable = false }: CourseGen
     };
   }, [generated, includeQuizzes]);
 
+  const handleLoadSample = () => {
+    addCourse({
+      name: SAMPLE_COURSE.name,
+      description: SAMPLE_COURSE.description,
+      outcomes: SAMPLE_COURSE.outcomes,
+      modules: SAMPLE_COURSE.modules,
+    });
+    onClose?.();
+  };
+
   const handleGenerate = async () => {
     if (!topic.trim() || phase === 'generating') return;
+
+    // Defer the API key requirement until the user actually generates.
+    const ready = await ensureApiKey();
+    if (!ready) return;
 
     setError(null);
     setPhase('generating');
@@ -390,6 +412,21 @@ export default function CourseGenerator({ onClose, closable = false }: CourseGen
           Describe a topic and let AI design the full course — modules, lessons, and a
           learner journey. You can refine everything afterwards.
         </Typography>
+
+        <Button
+          variant="text"
+          startIcon={<AutoStoriesOutlinedIcon />}
+          onClick={handleLoadSample}
+          sx={{
+            mt: 0.5,
+            fontWeight: 600,
+            color: 'primary.main',
+            textTransform: 'none',
+            '&:hover': { bgcolor: 'rgba(91,91,214,0.06)' },
+          }}
+        >
+          No API key? See a ready-made sample course
+        </Button>
       </Stack>
 
       <Box
@@ -457,8 +494,8 @@ export default function CourseGenerator({ onClose, closable = false }: CourseGen
               sx={{ mt: 0.5, display: 'flex', flexWrap: 'wrap' }}
             >
               {DURATION_OPTIONS.map(opt => (
-                <ToggleButton key={opt} value={opt} sx={{ textTransform: 'none', px: 1.5 }}>
-                  {opt}h
+                <ToggleButton key={opt.value} value={opt.value} sx={{ textTransform: 'none', px: 1.5 }}>
+                  {opt.label}
                 </ToggleButton>
               ))}
             </ToggleButtonGroup>
