@@ -4,6 +4,6 @@
  */
 
 export const MODEL_CONFIG = {
-  model: 'gemini-2.5-flash-lite',
+  model: 'gemini-3.5-flash-lite',
   temperature: 0.7
 } as const;
